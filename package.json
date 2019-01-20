@@ -1,0 +1,24 @@
+{
+  "name": "szhmqd27taopanp-node",
+  "version": "1.0.0",
+  "description": "深圳黑马前端27期node项目",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon src/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/taopanp/szhmqd27taopanp-node.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/taopanp/szhmqd27taopanp-node/issues"
+  },
+  "homepage": "https://github.com/taopanp/szhmqd27taopanp-node#readme",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}
