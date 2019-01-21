@@ -11,11 +11,10 @@ const app=express()
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))
- 
 // parse application/json
 app.use(bodyParser.json())
 // Use the session middleware
-app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 }}))
+app.use(session({ secret: 'keyboard cat',resave:false,saveUninitialized:false, cookie: { maxAge: 60000 }}))
 // 设置静态资源根目录
 app.use(express.static(path.join(__dirname,"public")))
 

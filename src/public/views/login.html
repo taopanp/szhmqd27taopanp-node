@@ -63,12 +63,27 @@
         $("#vcodeimgId").attr('src',`/account/vcode?aaa=${Math.random()}`)
     })
 
+function  register(){
+location.href='/account/register'
 
-function  login(){
+
+}
+function login(){
+    console.log('111');
 var username=$('#usernameId').val()
-var username=$.md5($('#passwordId').val()+'@@@')
+var password=$.md5($('#passwordId').val()+'!!!')
+var  vcode=$('#vcodeId').val()
+$.post('/account/login',{username,password,vcode},function(result){
+
+//   console.log(result);
+if(result.status!=0){
+    alert(result.message)
+}else{
+    location.href='account/studentpage'
+}
 
 
+})
 }
 </script>
 </html>
