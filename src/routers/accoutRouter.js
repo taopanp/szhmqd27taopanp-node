@@ -17,6 +17,7 @@ accoutRouter.post('/register',accoutController.register)
 accoutRouter.get('/login',accoutController.getloginpage)
 accoutRouter.get('/vcode',accoutController.getVcodeImage)
 accoutRouter.post('/login',accoutController.getlogin)
+accoutRouter.get('/loginout',accoutController.getloginout)
 
 
 // 导出路由对像

@@ -1,10 +1,12 @@
 // 导出一个方法  获取注册页面
 const path=require('path')
-const MongoClient = require('mongodb').MongoClient;
+// const MongoClient = require('mongodb').MongoClient;
+const  databasetools=require(path.join(__dirname,'../tools/databasetools.js'))
 const captchapng=require('captchapng')
+
 // Connection URL
-const url = 'mongodb://localhost:27017';
-const dbName = 'szhmqd27_tpp';
+// const url = 'mongodb://localhost:27017';
+// const dbName = 'szhmqd27_tpp';
 
 exports.getRegisterPage=(req,res)=>{
     // res.send('我是注册页面')
@@ -17,49 +19,69 @@ exports.register=(req,res)=>{
         status:0,
         message:'注册成功'
     }
-
-    const {username,password}=req.body
-    MongoClient.connect(url, function (err, client) {
-        // console.log("Connected successfully to server");
-        //操作数据库的一个db对象
-        const db = client.db(dbName);
-        // Get the documents collection 拿到要操作的集合
-        const collection = db.collection('accountInfo');
+  console.log(req.body);
+    const {username}=req.body
 
 
-        // 根据用户名查找用户名和密码是否是否存在    
-       collection.findOne({username},(err,doc)=>{
-      console.log(doc);
-      if(doc){//如果存在
-result.status=1,
-result.message='用户名已经存在'
+    databasetools.findYige('accountInfo',{username},(err,doc)=>{
 
-res.send(result)
-client.close()
-      }else{//不存在
-           
-        collection.insertOne((obj.body),(err,result2)=>{
-            // rusult2有值代表插入成功  没有值 null代表失败
-             if(!result2){//失败
-                   result.status=2,
-                   result.message='插入失败'
-             }
-             res.send(result),
-             client.close()//关闭数据库
+        if(doc){//如果存在
+            result.status=1,
+            result.message='用户名已经存在'
 
-        })
-      }
-      
-
-
-       })
-
-
-
+            // 返回  
+            res.json(result)
+            
+                  }else{//不存在
+                       
+                    databasetools.isertYige('accountInfo',req.body,(err,doc)=>{
+                        if(!doc){//失败
+                            result.status=2,
+                            result.message='插入失败'
+                      }
+                      res.json(result)
+                    })
+                  
+                  }
     })
 
+//     MongoClient.connect(url, function (err, client) {
+//         // console.log("Connected successfully to server");
+//         //操作数据库的一个db对象
+//         const db = client.db(dbName);
+//         // Get the documents collection 拿到要操作的集合
+//         const collection = db.collection('accountInfo');
 
+
+//         // 根据用户名查找用户名和密码是否是否存在    
+//        collection.findOne({username},(err,doc)=>{
+//       console.log(doc);
+//       if(doc){//如果存在
+// result.status=1,
+// result.message='用户名已经存在'
+
+// res.send(result)
+// client.close()
+//       }else{//不存在
+           
+//         collection.insertOne((obj.body),(err,result2)=>{
+//             // rusult2有值代表插入成功  没有值 null代表失败
+//              if(!result2){//失败
+//                    result.status=2,
+//                    result.message='插入失败'
+//              }
+//              res.send(result),
+//              client.close()//关闭数据库
+
+//         })
+//       }
+      
+//        })
+//     })
 }
+
+
+
 
 // 导出获取登录页面的方法
 exports.getloginpage=(req,res)=>{
@@ -67,6 +89,15 @@ exports.getloginpage=(req,res)=>{
     res.sendFile(path.join(__dirname,'../public/views/login.html'))
 
 }
+
+
+
+
+
+
+
+
+
 
 
 // 获取验证码的方法
@@ -92,8 +123,12 @@ exports.getVcodeImage=(req,res)=>{
         res.end(imgbase64);
 }
 
-// 登录
 
+
+
+
+
+// 登录
 
 exports.getlogin=(req,res)=>{
     const result={
@@ -101,6 +136,7 @@ exports.getlogin=(req,res)=>{
         message:'登录成功'
     }
   const {username,password,vcode}=req.body
+ 
 console.log(vcode);
 console.log(req.session.vcode);
 
@@ -109,42 +145,30 @@ if(vcode!=req.session.vcode){
   result.status=1,
   result.message='验证码错误'
 
-  res.send(result)
+  res.json(result)
 
   return
 
 }
 
-    MongoClient.connect(url, function (err, client) {
-        // console.log("Connected successfully to server");
-        //操作数据库的一个db对象
-        const db = client.db(dbName);
-        // Get the documents collection 拿到要操作的集合
-        const collection = db.collection('accountInfo');
+databasetools.isertYige('accountInfo',{username,password},(err,doc)=>{
 
+if(!doc){
+    result.status = 2;
+    result.message = "用户名或是密码错误";
 
-        // 根据用户名查找用户名和密码是否是否存在    
-       collection.findOne({username,password},(err,doc)=>{
-            if(!doc){
-                result.status=2,
-                result.message='用户名或密码错误'
-
-                res.send(result)
-              client.close()
-            }else{
-
-                res.send(result)
-                client.close()
-            }
-    
-
-       })
-
-
-    })
-
+}else{
+    req.session.loginName=username
+}
+res.json(result)
+})
 
 }
 
+exports.getloginout=(req,res)=>{
 
+    req.session.loginName=null
+
+    res.send(`<script>location.href="/account/login"</script>`)
+}
 
